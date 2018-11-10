@@ -49,6 +49,40 @@ class Mashed {
     // Om söksträngen inte är tom och är definierad så ska vi söka
     if (this.checkSearchInput(searchString)) {
       console.log(`Trigga sökning med ${searchString}`);
+      let searchArray = [
+        this.fetchFlickrPhotos(searchString),
+        this.fetchWordlabWords(searchString)
+      ];
+
+      Promise.all(searchArray)
+        .then((response) => {
+          return response.map(result => {
+            if (result.status === 200) {
+              return result.json();
+            } else {
+              console.log("Error, something broke");
+            }
+          })
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .then((res) => {
+          Promise.all(res).then((data) => {
+            this.searchResultsContainer.innerHTML = `
+            <li class="result">
+              <img src="${data[0].photos.photo[0].url_m}" />
+            </li>
+            <li class="result">
+              <img src="${data[0].photos.photo[1].url_m}" />
+            </li>`
+            console.log(data[0].photos.photo[0].url_m);
+          })
+        })
+
+      searchArray.forEach(promise => {
+        console.log(promise);
+      })
 
       // 1) Bygg upp en array med anrop (promise) till fetchFlickrPhotos och fetchWordlabWords med searchString
       // Notera: att ordningen du skickar in dessa i spelar roll i steg 3)
@@ -58,8 +92,8 @@ class Mashed {
       // 2 a) then(results) => Om varje anrop lyckas och varje anrop returnerar data
 
       // 3) För varje resultat i arryen results, visa bilder från FlickR or ord från WordLab.
-      // 4 results[0] kommer nu innehålla resultat från FlickR och results[1] resultat från WordLab.
-      // 5 skapa element och visa dem i DOM:en med metoderna (renderFlickResults och renderWordlabResults)
+      // 4) results[0] kommer nu innehålla resultat från FlickR och results[1] resultat från WordLab.
+      // 5) skapa element och visa dem i DOM:en med metoderna (renderFlickResults och renderWordlabResults)
 
       // 2 b) catch() => Om något anrop misslyckas, visa felmeddelande
 
@@ -89,7 +123,7 @@ class Mashed {
    * @returns {Promise} Ett fetch() Promise
    */
   fetchFlickrPhotos(searchString) {
-    let flickrAPIkey = ``; // Din API-nyckel här
+    let flickrAPIkey = `ae89e17af123f4d7198fe58201322636`; // Din API-nyckel här
     let flickerAPIRootURL = `https://api.flickr.com/services/rest/?`; // Grundläggande delen av Flickr's API URL
 
     // Olika sökparametrar som behövs för Flickr's API. För mer info om detta kolla i Flickrs API-dokumentation
@@ -106,7 +140,7 @@ class Mashed {
    * @returns {Promise} Ett fetch() Promise
    */
   fetchWordlabWords(searchString) {
-    let wordLabAPIkey = ``; // Din API-nyckel här
+    let wordLabAPIkey = `104991b0904fc03f042fb114307ac9e8`; // Din API-nyckel här
     let wordLabURL = `http://words.bighugelabs.com/api/2/${wordLabAPIkey}/${searchString}/json`;
 
     return fetch(wordLabURL);
