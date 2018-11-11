@@ -132,6 +132,7 @@ aside {
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
+    flex: 1 1 auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -139,13 +140,15 @@ aside {
     color: #fff;
     font-size: 2.0em;
     font-family: 'AvenirNext-Bold';
-    min-height: 550px;
-    width: 100%;
-    margin-bottom: 10px;
+    border: 1px solid white;
 
-    &:last-child {
-      margin-bottom: 0;
+    img, a {
+      width: 100%;
     }
+
+    // &:last-child {
+    //   margin-bottom: 0;
+    // }
     &:hover {
       cursor: pointer;
       background-color: lighten(slategray, 10%);

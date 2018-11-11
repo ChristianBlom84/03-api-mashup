@@ -48,6 +48,7 @@ class Mashed {
     event.preventDefault();
     // Om söksträngen inte är tom och är definierad så ska vi söka
     if (this.checkSearchInput(searchString)) {
+      this.loadingIndicator.classList.add("spin");
       console.log(`Trigga sökning med ${searchString}`);
       let searchArray = [
         this.fetchFlickrPhotos(searchString),
@@ -57,7 +58,7 @@ class Mashed {
       Promise.all(searchArray)
         .then((response) => {
           return response.map(result => {
-            if (result.status === 200) {
+            if (result.status === 200 || result.status === 303) {
               return result.json();
             } else {
               console.log("Error, something broke");
@@ -69,14 +70,8 @@ class Mashed {
         })
         .then((res) => {
           Promise.all(res).then((data) => {
-            this.searchResultsContainer.innerHTML = `
-            <li class="result">
-              <img src="${data[0].photos.photo[0].url_m}" />
-            </li>
-            <li class="result">
-              <img src="${data[0].photos.photo[1].url_m}" />
-            </li>`
-            console.log(data[0].photos.photo[0].url_m);
+            this.renderFlickrResults(data[0]);
+            this.renderWordlabResults(data[1]);
           })
         })
 
@@ -151,14 +146,45 @@ class Mashed {
    *
    * @param {Object} data Sökresultaten från Flickr's API.
    */
-  renderFlickrResults(data) {}
+  renderFlickrResults(data) {
+    console.log(this.searchResultsContainer);
+
+    while (this.searchResultsContainer.childElementCount) {
+      this.searchResultsContainer.lastChild.remove();
+    }
+    this.loadingIndicator.classList.remove("spin");
+
+    for (let i = 0; i < 9; i++) {
+      let imageContainer = document.createElement("li");
+      imageContainer.innerHTML = `<a href="${data.photos.photo[i].url_o}" target="_blank" aria-label="View photo on Flickr in a new tab"><img src="${data.photos.photo[i].url_q}" /></a>`;
+      imageContainer.classList.add("result");
+      this.searchResultsContainer.appendChild(imageContainer);
+    }
+  }
 
   /**
    * Metod som skapar ord-element för relaterade sökord som kommer från Wordlabs API
    *
    * @param {Object} data Sökresultaten från Flickr's API.
    */
-  renderWordlabResults(data) {}
+  renderWordlabResults(data) {
+    let nouns = data.noun;
+    let verbs = data.verb;
+    let adjectives = data.adjective;
+    let synonyms;
+    if (nouns) {
+      synonyms = nouns;
+      if (verbs) {
+        synonyms = synonyms.concat(verbs);
+      }
+      if (adjectives) {
+        synonyms = synonyms.concat(adjectives);
+      }
+    }
+
+    console.log(data);
+    console.log(synonyms);
+  }
 }
 
 // Immediately-Invoked Function Expression, detta betyder att när JS-filen läses in så körs koden inuti funktionen nedan.
