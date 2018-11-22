@@ -148,6 +148,8 @@ class Mashed {
    */
   renderFlickrResults(data) {
     let photoCount = 9;
+    // Todo: ladda fler foton vid större skärm if ()
+
     console.log(this.searchResultsContainer);
 
     while (this.searchResultsContainer.childElementCount) {
@@ -176,6 +178,10 @@ class Mashed {
     let synonyms;
     let chosenSynonyms;
 
+    while (this.sidebarWords[0].childElementCount) {
+      this.sidebarWords[0].lastChild.remove();
+    }
+
     if (data) {
       if (data.noun) {
         synonyms = data.noun.syn;
@@ -203,6 +209,11 @@ class Mashed {
     }
 
     for (let i = 0; i < chosenSynonyms.length; i++) {
+      let synonymElement = document.createElement("li");
+      let synonymAnchor = document.createElement("a");
+      synonymAnchor.href = "#";
+      synonymElement.appendChild(synonymAnchor);
+      this.sidebarWords[0].appendChild(synonymElement);
       this.sidebarWords[0].children[i].firstElementChild.innerText = chosenSynonyms[i];
     }
 
