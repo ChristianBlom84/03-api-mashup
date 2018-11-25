@@ -2,7 +2,7 @@
 Mall för API mashup inlämning
 
 Deployad version (uppdateras efter inlämning):
-[Länk](http://fornamn.efternamn.chas.academy/03-api-mashup)
+[Länk](http://u03.christianblom.se/)
 
 ## Mappstruktur och filer med förklaring
 ```bash

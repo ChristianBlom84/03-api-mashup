@@ -1,7 +1,6 @@
 class Mashed {
   constructor() {
     this.search = this.search.bind(this);
-    this.masonry = this.masonry.bind(this);
 
     this.initialize();
     this.addEventListeners();
@@ -36,6 +35,11 @@ class Mashed {
       )
     );
 
+    /*
+    * Eventlyssnare som kör masonry-funktionen för att justera om bildelementen
+    * varje gång fönstret byter storlek. Ganska kostsamt att göra på detta sättet,
+    * men det är en så lättkörd app att jag använde den metoden ändå.
+    */
     window.addEventListener('resize', () =>
       this.masonry(".results ul", ".result", 5, 3, 3, 2)
     );
@@ -53,7 +57,6 @@ class Mashed {
     // Om söksträngen inte är tom och är definierad så ska vi söka
     if (this.checkSearchInput(searchString)) {
       this.loadingIndicator.classList.add("spin");
-      console.log(`Trigga sökning med ${searchString}`);
       let searchArray = [
         this.fetchFlickrPhotos(searchString),
         this.fetchWordlabWords(searchString)
@@ -80,14 +83,7 @@ class Mashed {
             })
         })
 
-      searchArray.forEach(promise => {
-        console.log(promise);
-      })
-
     } else {
-      console.log(
-        `Söksträngen är tom, visa ett meddelande eller bara returnera`
-      );
       return;
     }
   }
@@ -137,8 +133,6 @@ class Mashed {
    */
   renderFlickrResults(data) {
     let photoCount = 20;
-
-    console.log(this.searchResultsContainer);
 
     while (this.searchResultsContainer.childElementCount) {
       this.searchResultsContainer.lastChild.remove();
@@ -207,9 +201,6 @@ class Mashed {
       this.sidebarWords[0].appendChild(synonymElement);
       this.sidebarWords[0].children[i].firstElementChild.innerText = chosenSynonyms[i];
     }
-
-    console.log(data);
-    console.log(synonyms);
   }
 
 
