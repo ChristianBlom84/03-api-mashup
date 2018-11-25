@@ -1,8 +1,7 @@
-var imagesLoaded = require('imagesloaded');
-
 class Mashed {
   constructor() {
     this.search = this.search.bind(this);
+    this.masonry = this.masonry.bind(this);
 
     this.initialize();
     this.addEventListeners();
@@ -15,7 +14,6 @@ class Mashed {
     this.searchBtn = document.querySelector('.search button');
     this.sidebarWords = document.querySelectorAll('aside ul');
     this.searchResultsContainer = document.querySelector('.results ul');
-    // Frivilligt: för att visa en laddningsindikator!
     this.loadingIndicator = document.querySelector('.loader');
   }
 
@@ -38,17 +36,10 @@ class Mashed {
       )
     );
 
-    /*
-    * Eventlyssnare för att rätta till masonry vid resize och load
-    *
-    */
-    ["resize", "load"].forEach(function(event) {
-      window.addEventListener(event, function() {
-        imagesLoaded( document.querySelector('.masonry'), function() {
-          // A maonsry grid with 8px gutter, with 3 columns on desktop, 2 on tablet, and 1 column on mobile devices.
-          masonry(".masonry", ".masonry-brick", 8, 3, 2, 1);
-        });
-    });
+    window.addEventListener('resize', () =>
+      this.masonry(".results ul", ".result", 5, 3, 3, 2)
+    );
+    
   }
 
   /**
@@ -93,19 +84,6 @@ class Mashed {
         console.log(promise);
       })
 
-      // 1) Bygg upp en array med anrop (promise) till fetchFlickrPhotos och fetchWordlabWords med searchString
-      // Notera: att ordningen du skickar in dessa i spelar roll i steg 3)
-
-      // 2) Använd Promise.all för att hantera varje anrop (promise)
-
-      // 2 a) then(results) => Om varje anrop lyckas och varje anrop returnerar data
-
-      // 3) För varje resultat i arryen results, visa bilder från FlickR or ord från WordLab.
-      // 4) results[0] kommer nu innehålla resultat från FlickR och results[1] resultat från WordLab.
-      // 5) skapa element och visa dem i DOM:en med metoderna (renderFlickResults och renderWordlabResults)
-
-      // 2 b) catch() => Om något anrop misslyckas, visa felmeddelande
-
     } else {
       console.log(
         `Söksträngen är tom, visa ett meddelande eller bara returnera`
@@ -131,10 +109,8 @@ class Mashed {
    * @returns {Promise} Ett fetch() Promise
    */
   fetchFlickrPhotos(searchString) {
-    let flickrAPIkey = `ae89e17af123f4d7198fe58201322636`; // Din API-nyckel här
-    let flickerAPIRootURL = `https://api.flickr.com/services/rest/?`; // Grundläggande delen av Flickr's API URL
-
-    // Olika sökparametrar som behövs för Flickr's API. För mer info om detta kolla i Flickrs API-dokumentation
+    let flickrAPIkey = `ae89e17af123f4d7198fe58201322636`;
+    let flickerAPIRootURL = `https://api.flickr.com/services/rest/?`;
     let flickrQueryParams = `&method=flickr.photos.search&api_key=${flickrAPIkey}&text=searchString&extras=url_q, url_o, url_m&format=json&tags=${searchString}&license=2,3,4,5,6,9&sort=relevance&parse_tags=1&nojsoncallback=1`;
     let flickrURL = `${flickerAPIRootURL}${flickrQueryParams}`;
 
@@ -160,8 +136,7 @@ class Mashed {
    * @param {Object} data Sökresultaten från Flickrs API.
    */
   renderFlickrResults(data) {
-    let photoCount = 12;
-    // Todo: ladda fler foton vid större skärm if ()
+    let photoCount = 20;
 
     console.log(this.searchResultsContainer);
 
@@ -180,8 +155,8 @@ class Mashed {
       imageContainer.classList.add("result");
       this.searchResultsContainer.appendChild(imageContainer);
     }
-
-    imagesLoaded(this.searchResultsContainer, this.masonry(".results ul", ".result", 5, 3, 3, 2) );
+  
+    this.masonry(".results ul", ".result", 5, 3, 3, 2);
     
   }
 
@@ -276,6 +251,20 @@ class Mashed {
     return randomWords;
   }
 
+  /**
+   * Metod som ordnar bilderna i en masonry. Från https://w3bits.com/flexbox-masonry/. Den beräknar
+   * totala höjden på alla bildelement och räknar ut korrekt maxhöjd för containern så att det blir rätt
+   * antal kolumner och inget overflow. Jag hann inte få imageLoaded att fungera, så jag lade in en timeout
+   * på 1.2 sekunder för att se till att alla bilder laddats innan stylingen sätts.
+   *
+   * @param {*} grid Containern för bildelementen
+   * @param {*} gridCell De enskilda elementen som innehåller bilderna
+   * @param {*} gridGutter Avståndet mellan bildelementen
+   * @param {*} dGridCol Antalet kolumner för desktop/största storleken
+   * @param {*} tGridCol Antalet kolumner för tablets/mellanstorleken
+   * @param {*} mGridCol Antalet kolumner för mobil/minsta storleken
+   * @memberof Mashed
+   */
   masonry(grid, gridCell, gridGutter, dGridCol, tGridCol, mGridCol) {
     var g = document.querySelector(grid),
         gc = document.querySelectorAll(gridCell),
@@ -283,16 +272,19 @@ class Mashed {
         gHeight = 0,
         i;
     
-    for(i=0; i<gcLength; ++i) {
-      gHeight+=gc[i].offsetHeight+parseInt(gridGutter);
-    }
+    setTimeout(function () {
+      for(i=0; i<gcLength; ++i) {
+        gHeight+=gc[i].offsetHeight+parseInt(gridGutter);
+      }
+
+      if(window.innerWidth >= 1024)
+        g.style.height = gHeight/dGridCol + gHeight/(gcLength+1) + "px";
+      else if(window.innerWidth < 1024 && window.innerWidth >= 768)
+        g.style.height = gHeight/tGridCol + gHeight/(gcLength+1) + "px";
+      else
+        g.style.height = gHeight/mGridCol + gHeight/(gcLength+1) + "px";
+    }, 1200);
     
-    if(window.screen.width >= 1024)
-      g.style.height = gHeight/dGridCol + gHeight/(gcLength+1) + "px";
-    else if(window.screen.width < 1024 && window.screen.width >= 768)
-      g.style.height = gHeight/tGridCol + gHeight/(gcLength+1) + "px";
-    else
-      g.style.height = gHeight/mGridCol + gHeight/(gcLength+1) + "px";
   }
 
 }

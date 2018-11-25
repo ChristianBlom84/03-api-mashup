@@ -395,8 +395,8 @@ aside ul li:hover a {
 
 .results {
   border: 3px solid slategray;
-  padding: 10px;
-  flex: 2;
+  padding: 5px;
+  flex: 3;
 }
 
 .results .loader {
@@ -423,24 +423,26 @@ aside ul li:hover a {
 }
 
 .results ul {
-  flex-wrap: wrap;
+  flex-flow: column wrap;
   display: flex;
+  max-width: 100%;
+  align-content: space-around;
 }
 
 .results .result {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: 33%;
+  width: calc(33% - 5px);
   background-color: gray;
   color: #fff;
-  font-size: 2.0em;
+  font-size: 1.5em;
   font-family: 'AvenirNext-Bold';
-  border: 1px solid white;
+  margin: 0 0 5px;
 }
 
 .results .result img, .results .result a {
@@ -460,4 +462,74 @@ footer {
   justify-content: center;
   flex-direction: column;
   text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+  main {
+    flex-flow: column nowrap;
+    margin: 10px;
+  }
+  .results ul {
+    align-content: space-evenly;
+  }
+  .results .result {
+    width: calc(49% - 5px);
+  }
+  aside {
+    order: -1;
+    flex: 0 1 auto;
+    border: 3px solid slategray;
+  }
+  aside ul {
+    flex-flow: row wrap;
+  }
+  aside ul li {
+    flex: 1 1 auto;
+    line-height: 2em;
+    min-width: 20%;
+    border: 1px solid slategray;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  main {
+    margin: 10px 0 0;
+  }
+  aside ul li {
+    min-width: 30%;
+  }
+  .search {
+    min-height: 60px;
+    line-height: 60px;
+    margin: 10px 30px 0px;
+    display: flex;
+    flex-flow: row wrap;
+  }
+  .search input {
+    flex: 1 0 auto;
+    width: 100%;
+    height: 60px;
+    text-indent: 30px;
+  }
+  .search input::-webkit-input-placeholder {
+    color: #c6cdd3;
+  }
+  .search button {
+    flex: 1 0 auto;
+    -webkit-appearance: none;
+    background-color: slategray;
+    color: #fff;
+    height: 100%;
+    width: 100%;
+    position: unset;
+  }
+  .search button:hover {
+    background-color: #8d9aa6;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .results {
+    flex: 4;
+  }
 }

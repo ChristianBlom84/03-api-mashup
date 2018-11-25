@@ -442,10 +442,10 @@ aside ul li:hover a {
 
 .results {
   border: 3px solid slategray;
-  padding: 10px;
-  -webkit-box-flex: 2;
-      -ms-flex: 2;
-          flex: 2;
+  padding: 5px;
+  -webkit-box-flex: 3;
+      -ms-flex: 3;
+          flex: 3;
 }
 
 .results .loader {
@@ -486,20 +486,25 @@ aside ul li:hover a {
 }
 
 .results ul {
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column wrap;
+          flex-flow: column wrap;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  max-width: 100%;
+  -ms-flex-line-pack: distribute;
+      align-content: space-around;
 }
 
 .results .result {
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
-  -webkit-box-flex: 1;
-      -ms-flex: 1 1 auto;
-          flex: 1 1 auto;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 auto;
+          flex: 0 1 auto;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -509,12 +514,12 @@ aside ul li:hover a {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  max-width: 33%;
+  width: calc(33% - 5px);
   background-color: gray;
   color: #fff;
-  font-size: 2.0em;
+  font-size: 1.5em;
   font-family: 'AvenirNext-Bold';
-  border: 1px solid white;
+  margin: 0 0 5px;
 }
 
 .results .result img, .results .result a {
@@ -543,5 +548,99 @@ footer {
       -ms-flex-direction: column;
           flex-direction: column;
   text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+  main {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: column nowrap;
+            flex-flow: column nowrap;
+    margin: 10px;
+  }
+  .results ul {
+    -ms-flex-line-pack: space-evenly;
+        align-content: space-evenly;
+  }
+  .results .result {
+    width: calc(49% - 5px);
+  }
+  aside {
+    -webkit-box-ordinal-group: 0;
+        -ms-flex-order: -1;
+            order: -1;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 1 auto;
+            flex: 0 1 auto;
+    border: 3px solid slategray;
+  }
+  aside ul {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: row wrap;
+            flex-flow: row wrap;
+  }
+  aside ul li {
+    -webkit-box-flex: 1;
+        -ms-flex: 1 1 auto;
+            flex: 1 1 auto;
+    line-height: 2em;
+    min-width: 20%;
+    border: 1px solid slategray;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  main {
+    margin: 10px 0 0;
+  }
+  aside ul li {
+    min-width: 30%;
+  }
+  .search {
+    min-height: 60px;
+    line-height: 60px;
+    margin: 10px 30px 0px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: row wrap;
+            flex-flow: row wrap;
+  }
+  .search input {
+    -webkit-box-flex: 1;
+        -ms-flex: 1 0 auto;
+            flex: 1 0 auto;
+    width: 100%;
+    height: 60px;
+    text-indent: 30px;
+  }
+  .search input::-webkit-input-placeholder {
+    color: #c6cdd3;
+  }
+  .search button {
+    -webkit-box-flex: 1;
+        -ms-flex: 1 0 auto;
+            flex: 1 0 auto;
+    -webkit-appearance: none;
+    background-color: slategray;
+    color: #fff;
+    height: 100%;
+    width: 100%;
+    position: unset;
+  }
+  .search button:hover {
+    background-color: #8d9aa6;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .results {
+    -webkit-box-flex: 4;
+        -ms-flex: 4;
+            flex: 4;
+  }
 }
 /*# sourceMappingURL=app.css.map */

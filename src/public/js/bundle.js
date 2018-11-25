@@ -106,6 +106,15 @@ class Mashed {
         this.search(event, event.target.textContent)
       )
     );
+
+    // ["resize", "load"].forEach(event =>
+    //   window.addEventListener(event, () =>
+    //     imagesLoaded( this.searchResultsContainer, () =>
+    //       this.masonry(".results ul", ".result", 5, 3, 3, 2)
+    //     )
+    //   )
+    // );
+    
   }
 
   /**
@@ -238,7 +247,7 @@ class Mashed {
       this.searchResultsContainer.appendChild(imageContainer);
     }
 
-    imagesLoaded(this.searchResultsContainer, this.masonry(".results ul", ".result", 5, 3, 3, 2) );
+    imagesLoaded(document.querySelectorAll(".results img"), this.masonry(".results ul", ".result", 5, 3, 3, 2) );
     
   }
 

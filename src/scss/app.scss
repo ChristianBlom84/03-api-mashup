@@ -102,8 +102,8 @@ aside {
 
 .results {
   border: 3px solid slategray;
-  padding: 10px;
-  flex: 2;
+  padding: 5px;
+  flex: 3;
 
   .loader {
     display: none;
@@ -124,32 +124,31 @@ aside {
   }
 
   ul {
-    flex-wrap: wrap;
+    flex-flow: column wrap;
     display: flex;
+    max-width: 100%;
+    align-content: space-around;
   }
 
   .result {
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    max-width: 33%;
+    width: calc(33% - 5px);
     background-color: gray;
     color: #fff;
-    font-size: 2.0em;
+    font-size: 1.5em;
     font-family: 'AvenirNext-Bold';
-    border: 1px solid white;
+    margin: 0 0 5px;
 
     img, a {
       width: 100%;
     }
 
-    // &:last-child {
-    //   margin-bottom: 0;
-    // }
     &:hover {
       cursor: pointer;
       background-color: lighten(slategray, 10%);
@@ -161,4 +160,95 @@ footer {
   background-color: slategray;
   height: 250px;
   @include flex-center;
+}
+
+@media screen and (max-width: 768px) {
+
+  main {
+    flex-flow: column nowrap;
+    margin: 10px;
+  }
+
+  .results {
+    ul {
+      align-content: space-evenly;
+    }
+
+    .result {
+      width: calc(49% - 5px);
+    }
+  }
+
+  aside {
+    order: -1;
+    flex: 0 1 auto;
+    border: 3px solid slategray;
+    
+    ul {
+      flex-flow: row wrap;
+
+      li {
+        flex: 1 1 auto;
+        line-height: 2em;
+        min-width: 20%;
+        border: 1px solid slategray;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 400px) {
+
+  main {
+    margin: 10px 0 0;    
+  }
+
+  aside {
+    
+    ul {
+
+      li {
+        min-width: 30%;
+      }
+    }
+  }
+
+  .search {
+    min-height: 60px;
+    line-height: 60px;
+    margin: 10px 30px 0px;
+    display: flex;
+    flex-flow: row wrap;
+  
+    input {
+      flex: 1 0 auto;
+      width: 100%;
+      height: 60px;
+      text-indent: 30px;
+      &::-webkit-input-placeholder {
+        color: lighten(slategray, 30%);
+      }
+    }
+  
+    button {
+      flex: 1 0 auto;
+      -webkit-appearance: none;
+      background-color: slategray;
+      color: #fff;
+      height: 100%;
+      width: 100%;
+      position: unset;
+  
+      &:hover {
+        background-color: lighten(slategray, 10%);
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1200px) {
+
+  .results {
+    flex: 4;
+  }
 }
