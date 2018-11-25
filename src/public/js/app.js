@@ -1,3 +1,5 @@
+var imagesLoaded = require('imagesloaded');
+
 class Mashed {
   constructor() {
     this.search = this.search.bind(this);
@@ -13,7 +15,6 @@ class Mashed {
     this.searchBtn = document.querySelector('.search button');
     this.sidebarWords = document.querySelectorAll('aside ul');
     this.searchResultsContainer = document.querySelector('.results ul');
-
     // Frivilligt: för att visa en laddningsindikator!
     this.loadingIndicator = document.querySelector('.loader');
   }
@@ -36,6 +37,18 @@ class Mashed {
         this.search(event, event.target.textContent)
       )
     );
+
+    /*
+    * Eventlyssnare för att rätta till masonry vid resize och load
+    *
+    */
+    ["resize", "load"].forEach(function(event) {
+      window.addEventListener(event, function() {
+        imagesLoaded( document.querySelector('.masonry'), function() {
+          // A maonsry grid with 8px gutter, with 3 columns on desktop, 2 on tablet, and 1 column on mobile devices.
+          masonry(".masonry", ".masonry-brick", 8, 3, 2, 1);
+        });
+    });
   }
 
   /**
@@ -147,7 +160,7 @@ class Mashed {
    * @param {Object} data Sökresultaten från Flickrs API.
    */
   renderFlickrResults(data) {
-    let photoCount = 9;
+    let photoCount = 12;
     // Todo: ladda fler foton vid större skärm if ()
 
     console.log(this.searchResultsContainer);
@@ -163,10 +176,13 @@ class Mashed {
 
     for (let i = 0; i < photoCount; i++) {
       let imageContainer = document.createElement("li");
-      imageContainer.innerHTML = `<a href="${data.photos.photo[i].url_o}" target="_blank" aria-label="View photo on Flickr in a new tab"><img src="${data.photos.photo[i].url_q}" /></a>`;
+      imageContainer.innerHTML = `<a href="${data.photos.photo[i].url_o}" target="_blank" aria-label="View photo on Flickr in a new tab"><img src="${data.photos.photo[i].url_m}" /></a>`;
       imageContainer.classList.add("result");
       this.searchResultsContainer.appendChild(imageContainer);
     }
+
+    imagesLoaded(this.searchResultsContainer, this.masonry(".results ul", ".result", 5, 3, 3, 2) );
+    
   }
 
   /**
@@ -175,8 +191,8 @@ class Mashed {
    * @param {Object} data Sökresultaten från Wordlabs API.
    */
   renderWordlabResults(data) {
-    let synonyms;
-    let chosenSynonyms;
+    let synonyms = [];
+    let chosenSynonyms = [];
 
     while (this.sidebarWords[0].childElementCount) {
       this.sidebarWords[0].lastChild.remove();
@@ -185,19 +201,19 @@ class Mashed {
     if (data) {
       if (data.noun) {
         synonyms = data.noun.syn;
-        if (data.verb) {
-          let verb = data.verb.syn;
-          verb.forEach(function(item) {
-            synonyms.push(item);
-          });
-        }
-        if (data.adjective) {
-          let adjective = data.adjective.syn;
-          adjective.forEach(function(item) {
-            synonyms.push(item);
-          });
-        }
-      } 
+      }
+      if (data.verb) {
+        let verb = data.verb.syn;
+        verb.forEach(function(item) {
+          synonyms.push(item);
+        });
+      }
+      if (data.adjective) {
+        let adjective = data.adjective.syn;
+        adjective.forEach(function(item) {
+          synonyms.push(item);
+        });
+      }
     } else {
       synonyms = ["No synonoms"];
     }
@@ -242,7 +258,6 @@ class Mashed {
       duplicate = false;
 
       if (randomWords.length > 0) {
-        // Todo: Fixa så att det inte blir dubletter
         for (let j = 0; j < randomWords.length; j++) {
           if (randomWords[j] === wordlabArray[randomIndex]) {
             duplicate = true;
@@ -259,6 +274,25 @@ class Mashed {
     }
 
     return randomWords;
+  }
+
+  masonry(grid, gridCell, gridGutter, dGridCol, tGridCol, mGridCol) {
+    var g = document.querySelector(grid),
+        gc = document.querySelectorAll(gridCell),
+        gcLength = gc.length,
+        gHeight = 0,
+        i;
+    
+    for(i=0; i<gcLength; ++i) {
+      gHeight+=gc[i].offsetHeight+parseInt(gridGutter);
+    }
+    
+    if(window.screen.width >= 1024)
+      g.style.height = gHeight/dGridCol + gHeight/(gcLength+1) + "px";
+    else if(window.screen.width < 1024 && window.screen.width >= 768)
+      g.style.height = gHeight/tGridCol + gHeight/(gcLength+1) + "px";
+    else
+      g.style.height = gHeight/mGridCol + gHeight/(gcLength+1) + "px";
   }
 
 }
